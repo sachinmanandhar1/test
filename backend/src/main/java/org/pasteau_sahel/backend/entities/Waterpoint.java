@@ -51,12 +51,6 @@ public class Waterpoint {
     private Long longitude;
     private Long latitude;
 
-    @Column(name = "x_coord")
-    private Double xCoord;
-
-    @Column(name = "y_coord")
-    private Double yCoord;
-
     private Long altitude;
 
     @Column(name = "code_usage", length = 254)
@@ -258,22 +252,6 @@ public class Waterpoint {
 
     public void setLatitude(Long latitude) {
         this.latitude = latitude;
-    }
-
-    public Double getxCoord() {
-        return xCoord;
-    }
-
-    public void setxCoord(Double xCoord) {
-        this.xCoord = xCoord;
-    }
-
-    public Double getyCoord() {
-        return yCoord;
-    }
-
-    public void setyCoord(Double yCoord) {
-        this.yCoord = yCoord;
     }
 
     public Long getAltitude() {
