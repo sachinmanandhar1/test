@@ -179,5 +179,10 @@ detailsForm.addEventListener('submit', function(evt) {
 });
 
 // Cancellation logic
-document.getElementById('cancel-type-dialog').addEventListener('click', () => typeDialog.style.display = 'none');
-document.getElementById('cancel-details-dialog').addEventListener('click', () => detailsDialog.style.display = 'none');
+document.getElementById('cancel-type-dialog').addEventListener('click', () => {
+    document.getElementById('type-dialog').style.display = 'none';
+});
+document.getElementById('cancel-details-dialog').addEventListener('click', () => {
+    document.getElementById('details-dialog').style.display = 'none';
+    document.getElementById('type-dialog').style.display = 'none';
+});
