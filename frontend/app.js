@@ -16,22 +16,19 @@ const map = new ol.Map({
 
 // --- Layer Definitions ---
 
-// Administrative Boundaries Layer
+// Administrative Boundaries Layer (from static GeoJSON)
 const sahelAdmLayerInfo = {
   id: 'sahel_adm',
   title: 'Sahel Administrative Boundaries',
-  typeName: 'sahel:sahel_adm',
+  url: '../data/sahel_adm.geojson',
   color: 'rgba(255, 0, 0, 0.5)'
 };
 
 const sahelAdmLayer = new ol.layer.Vector({
   title: sahelAdmLayerInfo.title,
   source: new ol.source.Vector({
-    format: new ol.format.GeoJSON(),
-    url: function(extent) {
-      return `http://localhost:8080/geoserver/sahel/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=${sahelAdmLayerInfo.typeName}&outputFormat=application%2Fjson&srsName=EPSG:3857&bbox=${extent.join(',')},EPSG:3857`;
-    },
-    strategy: ol.loadingstrategy.bbox
+    url: sahelAdmLayerInfo.url,
+    format: new ol.format.GeoJSON()
   }),
   style: new ol.style.Style({
     fill: new ol.style.Fill({ color: sahelAdmLayerInfo.color }),
@@ -41,49 +38,39 @@ const sahelAdmLayer = new ol.layer.Vector({
 map.addLayer(sahelAdmLayer);
 
 
-// Water Points Layer
+// Water Points Layer (from REST API)
 const waterPointTypes = {
   'PUITS': { title: 'Puits', color: 'blue' },
   'FORAGE': { title: 'Forage', color: 'green' },
   'MARE': { title: 'Mare', color: 'purple' }
 };
 
-const waterPointsTypeName = 'sahel:waterpoints';
+const waterPointsSource = new ol.source.Vector({
+  format: new ol.format.GeoJSON(),
+  url: '/api/waterpoints'
+});
 
-// Style function for water points
+// Style function for water points with client-side filtering
 const waterPointStyle = function(feature) {
   const type = feature.get('type');
-  const style = waterPointTypes[type];
-  if (style) {
+  const checkbox = document.getElementById(`filter-${type}`);
+
+  // If checkbox exists and is unchecked, don't display the feature
+  if (checkbox && !checkbox.checked) {
+    return null;
+  }
+
+  const styleInfo = waterPointTypes[type];
+  if (styleInfo) {
     return new ol.style.Style({
       image: new ol.style.Circle({
         radius: 5,
-        fill: new ol.style.Fill({ color: style.color })
+        fill: new ol.style.Fill({ color: styleInfo.color })
       })
     });
   }
   return null;
 };
-
-const waterPointsSource = new ol.source.Vector({
-  format: new ol.format.GeoJSON(),
-  url: function(extent) {
-    const visibleTypes = Object.keys(waterPointTypes).filter(type => {
-        const checkbox = document.getElementById(`filter-${type}`);
-        return checkbox && checkbox.checked;
-    });
-
-    if (visibleTypes.length === 0) {
-        // If no types are selected, don't request any features.
-        // We can't return an empty URL, so we create a filter that returns nothing.
-        return `http://localhost:8080/geoserver/sahel/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=${waterPointsTypeName}&outputFormat=application%2Fjson&srsName=EPSG:3857&bbox=${extent.join(',')},EPSG:3857&cql_filter=type%20IS%20NULL`;
-    }
-
-    const cql_filter = `type IN ('${visibleTypes.join("','")}')`;
-    return `http://localhost:8080/geoserver/sahel/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=${waterPointsTypeName}&outputFormat=application%2Fjson&srsName=EPSG:3857&bbox=${extent.join(',')},EPSG:3857&cql_filter=${encodeURIComponent(cql_filter)}`;
-  },
-  strategy: ol.loadingstrategy.bbox
-});
 
 const waterPointsLayer = new ol.layer.Vector({
   title: 'Water Points',
@@ -114,7 +101,8 @@ Object.keys(waterPointTypes).forEach(type => {
   layerSwitcherContainer.appendChild(label);
 
   document.getElementById(`filter-${type}`).addEventListener('change', () => {
-    waterPointsSource.refresh();
+    // When a filter changes, we just need to tell the source to re-render
+    waterPointsSource.changed();
   });
 });
 

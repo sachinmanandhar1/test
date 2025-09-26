@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://xmlns.jcp.org/jsf/html"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Waterpoint Management</title>
+</h:head>
+
+<h:body>
+    <h:form id="form">
+        <p:panel header="Waterpoint Management">
+            <p:toolbar>
+                <p:toolbargroup>
+                    <p:commandButton value="New" icon="pi pi-plus" actionListener="#{waterpointController.prepareNew}"
+                                     update=":form:manage-waterpoint-content" oncomplete="PF('manageWaterpointDialog').show()"
+                                     styleClass="ui-button-success" style="margin-right: .5rem">
+                        <p:resetInput target=":form:manage-waterpoint-content"/>
+                    </p:commandButton>
+                </p:toolbargroup>
+            </p:toolbar>
+
+            <p:dataTable id="dt-waterpoints" widgetVar="dtWaterpoints" var="wp" value="#{waterpointController.waterpoints}"
+                         paginator="true" rows="10">
+
+                <p:column headerText="ID" sortBy="#{wp.id}">
+                    <h:outputText value="#{wp.id}" />
+                </p:column>
+                <p:column headerText="Name" sortBy="#{wp.name}">
+                    <h:outputText value="#{wp.name}" />
+                </p:column>
+                <p:column headerText="Type" sortBy="#{wp.type}">
+                    <h:outputText value="#{wp.type}" />
+                </p:column>
+                <p:column headerText="Latitude">
+                    <h:outputText value="#{wp.latitude}" />
+                </p:column>
+                <p:column headerText="Longitude">
+                    <h:outputText value="#{wp.longitude}" />
+                </p:column>
+                <p:column>
+                    <p:commandButton icon="pi pi-pencil" update=":form:manage-waterpoint-content"
+                                     oncomplete="PF('manageWaterpointDialog').show()"
+                                     styleClass="edit-button rounded-button ui-button-success" process="@this">
+                        <f:setPropertyActionListener value="#{wp}" target="#{waterpointController.selectedWaterpoint}" />
+                        <p:resetInput target=":form:manage-waterpoint-content" />
+                    </p:commandButton>
+                    <p:commandButton class="ui-button-warning rounded-button" icon="pi pi-trash" process="@this"
+                                     oncomplete="PF('deleteWaterpointDialog').show()">
+                        <f:setPropertyActionListener value="#{wp}" target="#{waterpointController.selectedWaterpoint}" />
+                    </p:commandButton>
+                </p:column>
+            </p:dataTable>
+        </p:panel>
+
+        <p:dialog header="Waterpoint Details" showEffect="fade" modal="true"
+                  widgetVar="manageWaterpointDialog" responsive="true">
+            <p:outputPanel id="manage-waterpoint-content" class="ui-fluid">
+                <p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
+                    <p:outputLabel for="name" value="Name"/>
+                    <p:inputText id="name" value="#{waterpointController.selectedWaterpoint.name}" required="true"/>
+
+                    <p:outputLabel for="type" value="Type"/>
+                    <p:selectOneMenu id="type" value="#{waterpointController.selectedWaterpoint.type}" required="true">
+                        <f:selectItems value="#{waterpointController.waterpointTypes}"/>
+                    </p:selectOneMenu>
+
+                    <p:outputLabel for="latitude" value="Latitude"/>
+                    <p:inputNumber id="latitude" value="#{waterpointController.selectedWaterpoint.latitude}" required="true"/>
+
+                    <p:outputLabel for="longitude" value="Longitude"/>
+                    <p:inputNumber id="longitude" value="#{waterpointController.selectedWaterpoint.longitude}" required="true"/>
+                </p:panelGrid>
+            </p:outputPanel>
+
+            <f:facet name="footer">
+                <p:commandButton value="Save" icon="pi pi-check" actionListener="#{waterpointController.save}"
+                                 update="dt-waterpoints" process="manage-waterpoint-content @this"
+                                 oncomplete="PF('manageWaterpointDialog').hide()"/>
+                <p:commandButton value="Cancel" icon="pi pi-times" onclick="PF('manageWaterpointDialog').hide()"
+                                 class="ui-button-secondary"/>
+            </f:facet>
+        </p:dialog>
+
+        <p:confirmDialog widgetVar="deleteWaterpointDialog" showEffect="fade" width="300"
+                         message="Delete the waterpoint?" header="Confirm" severity="warn">
+            <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{waterpointController.delete(waterpointController.selectedWaterpoint.id)}"
+                             process="@this" update="dt-waterpoints" oncomplete="PF('deleteWaterpointDialog').hide()"/>
+            <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
+                             onclick="PF('deleteWaterpointDialog').hide()"/>
+        </p:confirmDialog>
+    </h:form>
+</h:body>
+</html>
