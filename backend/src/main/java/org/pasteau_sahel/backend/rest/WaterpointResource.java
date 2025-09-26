@@ -4,9 +4,8 @@ import org.pasteau_sahel.backend.entities.Waterpoint;
 import org.pasteau_sahel.backend.services.WaterpointService;
 
 import javax.inject.Inject;
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.inject.Inject;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.List;
@@ -34,5 +33,12 @@ public class WaterpointResource {
                 "]}";
 
         return Response.ok(geoJson).build();
+    }
+
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public Response createWaterpoint(Waterpoint waterpoint) {
+        waterpointService.save(waterpoint);
+        return Response.status(Response.Status.CREATED).build();
     }
 }

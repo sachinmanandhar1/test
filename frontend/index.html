@@ -13,6 +13,34 @@
       <h2>Legend</h2>
       <div id="legend"></div>
     </div>
+
+    <!-- Dialog to select waterpoint type -->
+    <div id="type-dialog" class="dialog" style="display: none;">
+      <div class="dialog-header">Select Waterpoint Type</div>
+      <div class="dialog-content">
+        <button data-type="PUITS">Puits</button>
+        <button data-type="FORAGE">Forage</button>
+        <button data-type="MARE">Mare</button>
+        <button id="cancel-type-dialog">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Dialog to enter waterpoint details -->
+    <div id="details-dialog" class="dialog" style="display: none;">
+      <div class="dialog-header">Enter Details</div>
+      <div class="dialog-content">
+        <form id="details-form">
+          <input type="hidden" id="latitude-input">
+          <input type="hidden" id="longitude-input">
+          <input type="hidden" id="type-input">
+          <label for="name-input">Name:</label>
+          <input type="text" id="name-input" required>
+          <button type="submit">Save</button>
+          <button type="button" id="cancel-details-dialog">Cancel</button>
+        </form>
+      </div>
+    </div>
+
     <script src="https://openlayers.org/en/v6.14.1/build/ol.js"></script>
     <script src="app.js"></script>
   </body>

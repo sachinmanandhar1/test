@@ -123,3 +123,84 @@ Object.keys(waterPointTypes).forEach(type => {
   legendItem.innerHTML = `<div class="legend-color" style="background-color: ${typeInfo.color};"></div> <span>${typeInfo.title}</span>`;
   legendContainer.appendChild(legendItem);
 });
+
+// --- Map Interaction for Adding New Waterpoints ---
+
+const typeDialog = document.getElementById('type-dialog');
+const detailsDialog = document.getElementById('details-dialog');
+const detailsForm = document.getElementById('details-form');
+const cancelTypeDialog = document.getElementById('cancel-type-dialog');
+const cancelDetailsDialog = document.getElementById('cancel-details-dialog');
+const nameInput = document.getElementById('name-input');
+const latitudeInput = document.getElementById('latitude-input');
+const longitudeInput = document.getElementById('longitude-input');
+const typeInput = document.getElementById('type-input');
+
+// 1. Listen for clicks on the map
+map.on('click', function(evt) {
+  const coords = ol.proj.toLonLat(evt.coordinate);
+
+  // Position and show the type selection dialog
+  typeDialog.style.left = `${evt.pixel[0]}px`;
+  typeDialog.style.top = `${evt.pixel[1]}px`;
+  typeDialog.style.display = 'block';
+
+  // Store coordinates for later
+  latitudeInput.value = coords[1];
+  longitudeInput.value = coords[0];
+});
+
+// 2. Handle type selection
+typeDialog.addEventListener('click', function(evt) {
+  if (evt.target.tagName === 'BUTTON' && evt.target.dataset.type) {
+    const selectedType = evt.target.dataset.type;
+    typeInput.value = selectedType;
+
+    // Hide type dialog and show details dialog
+    typeDialog.style.display = 'none';
+    detailsDialog.style.left = typeDialog.style.left;
+    detailsDialog.style.top = typeDialog.style.top;
+    detailsDialog.style.display = 'block';
+    nameInput.focus();
+  }
+});
+
+// 3. Handle form submission
+detailsForm.addEventListener('submit', function(evt) {
+  evt.preventDefault();
+
+  const newWaterpoint = {
+    name: nameInput.value,
+    latitude: parseFloat(latitudeInput.value),
+    longitude: parseFloat(longitudeInput.value),
+    type: typeInput.value
+  };
+
+  fetch('/api/waterpoints', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(newWaterpoint)
+  })
+  .then(response => {
+    if (response.ok) {
+      // Hide dialog, reset form, and refresh map layer
+      detailsDialog.style.display = 'none';
+      detailsForm.reset();
+      waterPointsSource.refresh();
+    } else {
+      alert('Error saving waterpoint!');
+    }
+  });
+});
+
+// 4. Handle cancellation
+cancelTypeDialog.addEventListener('click', () => {
+  typeDialog.style.display = 'none';
+});
+
+cancelDetailsDialog.addEventListener('click', () => {
+  detailsDialog.style.display = 'none';
+  detailsForm.reset();
+});
