@@ -62,9 +62,9 @@ map.addLayer(sahelAdmLayer);
 
 // Water Points Layer (from REST API)
 const waterPointTypes = {
-  'PUITS': { title: 'Puits', color: 'blue' },
-  'FORAGE': { title: 'Forage', color: 'green' },
-  'MARE': { title: 'Mare', color: 'purple' }
+  'WELL': { title: 'Well', color: 'blue' },
+  'BOREHOLE': { title: 'Borehole', color: 'green' },
+  'POND': { title: 'Pond', color: 'purple' }
 };
 
 const waterPointsSource = new ol.source.Vector({
