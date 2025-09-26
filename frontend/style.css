@@ -1,0 +1,42 @@
+body {
+  font-family: sans-serif;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+#map {
+  height: 100vh;
+  flex-grow: 1;
+}
+
+#sidebar {
+  width: 300px;
+  height: 100vh;
+  background-color: #f0f0f0;
+  padding: 10px;
+  box-sizing: border-box;
+  overflow-y: auto;
+}
+
+#sidebar h2 {
+  margin-top: 0;
+}
+
+#layer-switcher label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+#legend .legend-item {
+  display: flex;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+#legend .legend-color {
+  width: 20px;
+  height: 20px;
+  margin-right: 10px;
+  border: 1px solid #000;
+}

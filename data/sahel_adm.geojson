@@ -1,0 +1,59 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Region 1"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [10, 10],
+            [10, 15],
+            [15, 15],
+            [15, 10],
+            [10, 10]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Region 2"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [16, 10],
+            [16, 15],
+            [21, 15],
+            [21, 10],
+            [16, 10]
+          ]
+        ]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Region 3"
+      },
+      "geometry": {
+        "type": "Polygon",
+        "coordinates": [
+          [
+            [10, 16],
+            [10, 21],
+            [15, 21],
+            [15, 16],
+            [10, 16]
+          ]
+        ]
+      }
+    }
+  ]
+}

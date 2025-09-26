@@ -1,0 +1,25 @@
+{
+  "type": "FeatureCollection",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Borehole 1"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [18, 11]
+      }
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "name": "Borehole 2"
+      },
+      "geometry": {
+        "type": "Point",
+        "coordinates": [19, 13]
+      }
+    }
+  ]
+}

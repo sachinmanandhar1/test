@@ -1,0 +1,28 @@
+<featureType>
+  <name>boreholes</name>
+  <nativeName>boreholes</nativeName>
+  <namespace>
+    <name>sahel</name>
+  </namespace>
+  <title>Boreholes</title>
+  <srs>EPSG:4326</srs>
+  <nativeBoundingBox>
+    <minx>18</minx>
+    <maxx>19</maxx>
+    <miny>11</miny>
+    <maxy>13</maxy>
+    <crs>EPSG:4326</crs>
+  </nativeBoundingBox>
+  <latLonBoundingBox>
+    <minx>18</minx>
+    <maxx>19</maxx>
+    <miny>11</miny>
+    <maxy>13</maxy>
+    <crs>EPSG:4326</crs>
+  </latLonBoundingBox>
+  <projectionPolicy>FORCE_DECLARED</projectionPolicy>
+  <enabled>true</enabled>
+  <store class="dataStore">
+    <name>boreholes</name>
+  </store>
+</featureType>
