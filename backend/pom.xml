@@ -39,11 +39,18 @@
             <scope>provided</scope>
         </dependency>
 
-        <!-- H2 Database (for in-memory testing) -->
+        <!-- PostgreSQL JDBC Driver -->
         <dependency>
-            <groupId>com.h2database</groupId>
-            <artifactId>h2</artifactId>
-            <version>1.4.200</version>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.2.23</version>
+        </dependency>
+
+        <!-- Hibernate Spatial (for Geometry type) -->
+        <dependency>
+            <groupId>org.hibernate</groupId>
+            <artifactId>hibernate-spatial</artifactId>
+            <version>5.4.32.Final</version>
         </dependency>
 
         <!-- JAX-RS (for REST API) -->

@@ -22,22 +22,23 @@
             </p:toolbar>
 
             <p:dataTable id="dt-waterpoints" widgetVar="dtWaterpoints" var="wp" value="#{waterpointController.waterpoints}"
-                         paginator="true" rows="10">
+                         paginator="true" rows="10" selectionMode="single" selection="#{waterpointController.selectedWaterpoint}"
+                         rowKey="#{wp.gid}">
 
-                <p:column headerText="ID" sortBy="#{wp.id}">
-                    <h:outputText value="#{wp.id}" />
+                <p:column headerText="GID" sortBy="#{wp.gid}">
+                    <h:outputText value="#{wp.gid}" />
                 </p:column>
-                <p:column headerText="Name" sortBy="#{wp.name}">
-                    <h:outputText value="#{wp.name}" />
+                <p:column headerText="Book No." sortBy="#{wp.noBook}">
+                    <h:outputText value="#{wp.noBook}" />
                 </p:column>
-                <p:column headerText="Type" sortBy="#{wp.type}">
-                    <h:outputText value="#{wp.type}" />
+                <p:column headerText="Category" sortBy="#{wp.catOuvrag}">
+                    <h:outputText value="#{wp.catOuvrag}" />
                 </p:column>
-                <p:column headerText="Latitude">
-                    <h:outputText value="#{wp.latitude}" />
+                <p:column headerText="Type" sortBy="#{wp.typeOpen}">
+                    <h:outputText value="#{wp.typeOpen}" />
                 </p:column>
-                <p:column headerText="Longitude">
-                    <h:outputText value="#{wp.longitude}" />
+                <p:column headerText="Zone" sortBy="#{wp.zone}">
+                    <h:outputText value="#{wp.zone}" />
                 </p:column>
                 <p:column>
                     <p:commandButton icon="pi pi-pencil" update=":form:manage-waterpoint-content"
@@ -54,24 +55,81 @@
             </p:dataTable>
         </p:panel>
 
-        <p:dialog header="Waterpoint Details" showEffect="fade" modal="true"
+        <p:dialog header="Waterpoint Details" showEffect="fade" modal="true" width="800"
                   widgetVar="manageWaterpointDialog" responsive="true">
             <p:outputPanel id="manage-waterpoint-content" class="ui-fluid">
-                <p:panelGrid columns="2" styleClass="ui-panelgrid-blank">
-                    <p:outputLabel for="name" value="Name"/>
-                    <p:inputText id="name" value="#{waterpointController.selectedWaterpoint.name}" required="true"/>
-
-                    <p:outputLabel for="type" value="Type"/>
-                    <p:selectOneMenu id="type" value="#{waterpointController.selectedWaterpoint.type}" required="true">
-                        <f:selectItems value="#{waterpointController.waterpointTypes}"/>
-                    </p:selectOneMenu>
-
-                    <p:outputLabel for="latitude" value="Latitude"/>
-                    <p:inputNumber id="latitude" value="#{waterpointController.selectedWaterpoint.latitude}" required="true"/>
-
-                    <p:outputLabel for="longitude" value="Longitude"/>
-                    <p:inputNumber id="longitude" value="#{waterpointController.selectedWaterpoint.longitude}" required="true"/>
-                </p:panelGrid>
+                <p:tabView>
+                    <p:tab title="General">
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank">
+                            <p:outputLabel for="noBook" value="Book No."/>
+                            <p:inputText id="noBook" value="#{waterpointController.selectedWaterpoint.noBook}"/>
+                            <p:outputLabel for="oldNo" value="Old No."/>
+                            <p:inputText id="oldNo" value="#{waterpointController.selectedWaterpoint.oldNo}"/>
+                            <p:outputLabel for="ancientIrh" value="Ancient IRH"/>
+                            <p:inputText id="ancientIrh" value="#{waterpointController.selectedWaterpoint.ancientIrh}"/>
+                            <p:outputLabel for="catOuvrag" value="Category"/>
+                            <p:inputText id="catOuvrag" value="#{waterpointController.selectedWaterpoint.catOuvrag}"/>
+                            <p:outputLabel for="typeOpen" value="Type"/>
+                            <p:inputText id="typeOpen" value="#{waterpointController.selectedWaterpoint.typeOpen}"/>
+                        </p:panelGrid>
+                    </p:tab>
+                    <p:tab title="Location">
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank">
+                            <p:outputLabel for="longitude" value="Longitude"/>
+                            <p:inputNumber id="longitude" value="#{waterpointController.selectedWaterpoint.longitude}"/>
+                            <p:outputLabel for="latitude" value="Latitude"/>
+                            <p:inputNumber id="latitude" value="#{waterpointController.selectedWaterpoint.latitude}"/>
+                            <p:outputLabel for="xCoord" value="X Coord"/>
+                            <p:inputNumber id="xCoord" value="#{waterpointController.selectedWaterpoint.xCoord}"/>
+                            <p:outputLabel for="yCoord" value="Y Coord"/>
+                            <p:inputNumber id="yCoord" value="#{waterpointController.selectedWaterpoint.yCoord}"/>
+                            <p:outputLabel for="altitude" value="Altitude"/>
+                            <p:inputNumber id="altitude" value="#{waterpointController.selectedWaterpoint.altitude}"/>
+                             <p:outputLabel for="codeVilla" value="Village Code"/>
+                            <p:inputText id="codeVilla" value="#{waterpointController.selectedWaterpoint.codeVilla}"/>
+                            <p:outputLabel for="neighborhood" value="Neighborhood"/>
+                            <p:inputText id="neighborhood" value="#{waterpointController.selectedWaterpoint.neighborhood}"/>
+                            <p:outputLabel for="zone" value="Zone"/>
+                            <p:inputText id="zone" value="#{waterpointController.selectedWaterpoint.zone}"/>
+                        </p:panelGrid>
+                    </p:tab>
+                    <p:tab title="Technical Details">
+                         <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank">
+                            <p:outputLabel for="geomorphol" value="Geomorphology"/>
+                            <p:inputText id="geomorphol" value="#{waterpointController.selectedWaterpoint.geomorphol}"/>
+                            <p:outputLabel for="classOpen" value="Class"/>
+                            <p:inputNumber id="classOpen" value="#{waterpointController.selectedWaterpoint.classOpen}"/>
+                            <p:outputLabel for="profFract" value="Prof. Fract."/>
+                            <p:inputNumber id="profFract" value="#{waterpointController.selectedWaterpoint.profFract}"/>
+                            <p:outputLabel for="profRoof" value="Prof. Roof"/>
+                            <p:inputNumber id="profRoof" value="#{waterpointController.selectedWaterpoint.profRoof}"/>
+                            <p:outputLabel for="profMur" value="Prof. Mur"/>
+                            <p:inputNumber id="profMur" value="#{waterpointController.selectedWaterpoint.profMur}"/>
+                            <p:outputLabel for="aquifName" value="Aquifer Name"/>
+                            <p:inputText id="aquifName" value="#{waterpointController.selectedWaterpoint.aquifName}"/>
+                             <p:outputLabel for="techFor" value="Tech For"/>
+                            <p:inputText id="techFor" value="#{waterpointController.selectedWaterpoint.techFor}"/>
+                        </p:panelGrid>
+                    </p:tab>
+                    <p:tab title="Administrative">
+                        <p:panelGrid columns="4" layout="grid" styleClass="ui-panelgrid-blank">
+                            <p:outputLabel for="projectCode" value="Project Code"/>
+                            <p:inputNumber id="projectCode" value="#{waterpointController.selectedWaterpoint.projectCode}"/>
+                            <p:outputLabel for="codeBetween" value="Code Between"/>
+                            <p:inputNumber id="codeBetween" value="#{waterpointController.selectedWaterpoint.codeBetween}"/>
+                            <p:outputLabel for="codeAep" value="AEP Code"/>
+                            <p:inputText id="codeAep" value="#{waterpointController.selectedWaterpoint.codeAep}"/>
+                            <p:outputLabel for="dateDebut" value="Start Date"/>
+                            <p:inputText id="dateDebut" value="#{waterpointController.selectedWaterpoint.dateDebut}"/>
+                            <p:outputLabel for="dateReal" value="Realization Date"/>
+                            <p:inputText id="dateReal" value="#{waterpointController.selectedWaterpoint.dateReal}"/>
+                            <p:outputLabel for="dateRecep" value="Reception Date"/>
+                            <p:inputText id="dateRecep" value="#{waterpointController.selectedWaterpoint.dateRecep}"/>
+                            <p:outputLabel for="dateSaisi" value="Saisi Date"/>
+                            <p:inputText id="dateSaisi" value="#{waterpointController.selectedWaterpoint.dateSaisi}"/>
+                        </p:panelGrid>
+                    </p:tab>
+                </p:tabView>
             </p:outputPanel>
 
             <f:facet name="footer">
@@ -85,7 +143,7 @@
 
         <p:confirmDialog widgetVar="deleteWaterpointDialog" showEffect="fade" width="300"
                          message="Delete the waterpoint?" header="Confirm" severity="warn">
-            <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{waterpointController.delete(waterpointController.selectedWaterpoint.id)}"
+            <p:commandButton value="Yes" icon="pi pi-check" actionListener="#{waterpointController.delete(waterpointController.selectedWaterpoint.gid)}"
                              process="@this" update="dt-waterpoints" oncomplete="PF('deleteWaterpointDialog').hide()"/>
             <p:commandButton value="No" type="button" styleClass="ui-button-secondary" icon="pi pi-times"
                              onclick="PF('deleteWaterpointDialog').hide()"/>

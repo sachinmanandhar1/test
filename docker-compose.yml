@@ -1,0 +1,30 @@
+version: '3.8'
+services:
+  db:
+    image: postgres:13
+    container_name: pasteau-db
+    environment:
+      POSTGRES_USER: pasteau
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: pasteau_sahel
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  app:
+    build: ./backend
+    container_name: pasteau-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      DB_HOST: db
+      DB_PORT: 5432
+      DB_NAME: pasteau_sahel
+      DB_USER: pasteau
+      DB_PASSWORD: password
+
+volumes:
+  postgres_data:
