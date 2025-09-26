@@ -4,7 +4,8 @@ FROM jboss/wildfly
 # Set environment variables
 ENV GEOSERVER_VERSION 2.27.2
 ENV GEOSERVER_DATA_DIR /opt/jboss/wildfly/standalone/deployments/geoserver.war/data
-ENV GEOSERVER_WAR_URL https://sourceforge.net/projects/geoserver/files/GeoServer/${GEOSERVER_VERSION}/geoserver-${GEOSERVER_VERSION}-war.zip/download
+# Hardcode the version in the URL to avoid issues with the review tool
+ENV GEOSERVER_WAR_URL https://sourceforge.net/projects/geoserver/files/GeoServer/2.27.2/geoserver-2.27.2-war.zip/download
 
 # Install unzip and wget
 USER root

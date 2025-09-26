@@ -14,92 +14,124 @@ const map = new ol.Map({
   })
 });
 
-// Layer definitions
-const layers = [
-  {
-    id: 'sahel_adm',
-    title: 'Sahel Administrative Boundaries',
-    typeName: 'sahel:sahel_adm',
-    color: 'rgba(255, 0, 0, 0.5)'
-  },
-  {
-    id: 'wells',
-    title: 'Wells',
-    typeName: 'sahel:wells',
-    color: 'blue'
-  },
-  {
-    id: 'boreholes',
-    title: 'Boreholes',
-    typeName: 'sahel:boreholes',
-    color: 'green'
-  },
-  {
-    id: 'ponds',
-    title: 'Ponds',
-    typeName: 'sahel:ponds',
-    color: 'purple'
-  }
-];
+// --- Layer Definitions ---
 
-// Create and add layers to the map
-layers.forEach(layerInfo => {
-  const wfsUrl = `http://localhost:8080/geoserver/sahel/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=${layerInfo.typeName}&outputFormat=application%2Fjson&srsName=EPSG:3857`;
+// Administrative Boundaries Layer
+const sahelAdmLayerInfo = {
+  id: 'sahel_adm',
+  title: 'Sahel Administrative Boundaries',
+  typeName: 'sahel:sahel_adm',
+  color: 'rgba(255, 0, 0, 0.5)'
+};
 
-  const layer = new ol.layer.Vector({
-    title: layerInfo.title,
-    source: new ol.source.Vector({
-      format: new ol.format.GeoJSON(),
-      url: function(extent) {
-        return wfsUrl + '&bbox=' + extent.join(',') + ',EPSG:3857';
-      },
-      strategy: ol.loadingstrategy.bbox
-    }),
-    style: new ol.style.Style({
-      fill: new ol.style.Fill({
-        color: layerInfo.color
-      }),
-      stroke: new ol.style.Stroke({
-        color: '#000',
-        width: 1
-      }),
+const sahelAdmLayer = new ol.layer.Vector({
+  title: sahelAdmLayerInfo.title,
+  source: new ol.source.Vector({
+    format: new ol.format.GeoJSON(),
+    url: function(extent) {
+      return `http://localhost:8080/geoserver/sahel/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=${sahelAdmLayerInfo.typeName}&outputFormat=application%2Fjson&srsName=EPSG:3857&bbox=${extent.join(',')},EPSG:3857`;
+    },
+    strategy: ol.loadingstrategy.bbox
+  }),
+  style: new ol.style.Style({
+    fill: new ol.style.Fill({ color: sahelAdmLayerInfo.color }),
+    stroke: new ol.style.Stroke({ color: '#000', width: 1 })
+  })
+});
+map.addLayer(sahelAdmLayer);
+
+
+// Water Points Layer
+const waterPointTypes = {
+  'PUITS': { title: 'Puits', color: 'blue' },
+  'FORAGE': { title: 'Forage', color: 'green' },
+  'MARE': { title: 'Mare', color: 'purple' }
+};
+
+const waterPointsTypeName = 'sahel:waterpoints';
+
+// Style function for water points
+const waterPointStyle = function(feature) {
+  const type = feature.get('type');
+  const style = waterPointTypes[type];
+  if (style) {
+    return new ol.style.Style({
       image: new ol.style.Circle({
         radius: 5,
-        fill: new ol.style.Fill({
-          color: layerInfo.color
-        })
+        fill: new ol.style.Fill({ color: style.color })
       })
-    })
-  });
-  map.addLayer(layer);
-});
-
-// Custom Layer Switcher
-const layerSwitcherContainer = document.getElementById('layer-switcher');
-map.getLayers().forEach(layer => {
-  if (layer.get('title') !== 'OpenStreetMap') {
-    const layerId = layer.get('title').replace(/\s/g, '-').toLowerCase();
-    const label = document.createElement('label');
-    label.innerHTML = `
-      <input type="checkbox" checked id="${layerId}">
-      ${layer.get('title')}
-    `;
-    layerSwitcherContainer.appendChild(label);
-
-    document.getElementById(layerId).addEventListener('change', (event) => {
-      layer.setVisible(event.target.checked);
     });
   }
+  return null;
+};
+
+const waterPointsSource = new ol.source.Vector({
+  format: new ol.format.GeoJSON(),
+  url: function(extent) {
+    const visibleTypes = Object.keys(waterPointTypes).filter(type => {
+        const checkbox = document.getElementById(`filter-${type}`);
+        return checkbox && checkbox.checked;
+    });
+
+    if (visibleTypes.length === 0) {
+        // If no types are selected, don't request any features.
+        // We can't return an empty URL, so we create a filter that returns nothing.
+        return `http://localhost:8080/geoserver/sahel/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=${waterPointsTypeName}&outputFormat=application%2Fjson&srsName=EPSG:3857&bbox=${extent.join(',')},EPSG:3857&cql_filter=type%20IS%20NULL`;
+    }
+
+    const cql_filter = `type IN ('${visibleTypes.join("','")}')`;
+    return `http://localhost:8080/geoserver/sahel/ows?service=WFS&version=1.0.0&request=GetFeature&typeName=${waterPointsTypeName}&outputFormat=application%2Fjson&srsName=EPSG:3857&bbox=${extent.join(',')},EPSG:3857&cql_filter=${encodeURIComponent(cql_filter)}`;
+  },
+  strategy: ol.loadingstrategy.bbox
 });
 
-// Custom Legend
+const waterPointsLayer = new ol.layer.Vector({
+  title: 'Water Points',
+  source: waterPointsSource,
+  style: waterPointStyle
+});
+map.addLayer(waterPointsLayer);
+
+
+// --- UI Controls (Sidebar) ---
+
+const layerSwitcherContainer = document.getElementById('layer-switcher');
 const legendContainer = document.getElementById('legend');
-layers.forEach(layerInfo => {
+
+// Add control for Administrative Boundaries
+const admLabel = document.createElement('label');
+admLabel.innerHTML = `<input type="checkbox" checked id="layer-sahel_adm"> ${sahelAdmLayerInfo.title}`;
+layerSwitcherContainer.appendChild(admLabel);
+document.getElementById('layer-sahel_adm').addEventListener('change', (event) => {
+  sahelAdmLayer.setVisible(event.target.checked);
+});
+
+// Add controls for each water point type
+Object.keys(waterPointTypes).forEach(type => {
+  const typeInfo = waterPointTypes[type];
+  const label = document.createElement('label');
+  label.innerHTML = `<input type="checkbox" checked id="filter-${type}"> ${typeInfo.title}`;
+  layerSwitcherContainer.appendChild(label);
+
+  document.getElementById(`filter-${type}`).addEventListener('change', () => {
+    waterPointsSource.refresh();
+  });
+});
+
+
+// --- Legend ---
+
+// Add legend for Administrative Boundaries
+const admLegendItem = document.createElement('div');
+admLegendItem.className = 'legend-item';
+admLegendItem.innerHTML = `<div class="legend-color" style="background-color: ${sahelAdmLayerInfo.color};"></div> <span>${sahelAdmLayerInfo.title}</span>`;
+legendContainer.appendChild(admLegendItem);
+
+// Add legend for each water point type
+Object.keys(waterPointTypes).forEach(type => {
+  const typeInfo = waterPointTypes[type];
   const legendItem = document.createElement('div');
   legendItem.className = 'legend-item';
-  legendItem.innerHTML = `
-    <div class="legend-color" style="background-color: ${layerInfo.color};"></div>
-    <span>${layerInfo.title}</span>
-  `;
+  legendItem.innerHTML = `<div class="legend-color" style="background-color: ${typeInfo.color};"></div> <span>${typeInfo.title}</span>`;
   legendContainer.appendChild(legendItem);
 });

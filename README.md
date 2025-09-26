@@ -8,21 +8,28 @@ The project is organized into the following directories:
 
 - `backend/`: Contains the configuration and `Dockerfile` for the backend.
   - `Dockerfile`: A functional Dockerfile that builds a JBoss (WildFly) image, downloads and deploys the GeoServer WAR file.
-  - `geoserver_config/`: GeoServer configuration files that are copied into the Docker image to define workspaces, datastores, and feature types.
+  - `geoserver_config/`: GeoServer configuration files that are copied into the Docker image to define workspaces and data layers.
 - `data/`: Contains the geospatial data used in the application, which is also copied into the backend container.
   - `sahel_adm.geojson`: A sample GeoJSON file with administrative boundaries.
-  - `wells.geojson`: Sample GeoJSON point data for wells.
-  - `boreholes.geojson`: Sample GeoJSON point data for boreholes.
-  - `ponds.geojson`: Sample GeoJSON point data for ponds.
+  - `waterpoints.geojson`: A consolidated GeoJSON file for all water points, with a `type` attribute ("PUITS", "FORAGE", "MARE").
 - `frontend/`: Contains the frontend application code.
   - `index.html`: The main HTML file for the application.
   - `style.css`: CSS for styling the application's UI.
-  - `app.js`: The JavaScript code that connects to the GeoServer backend via Web Feature Service (WFS) requests to display data on the map.
+  - `app.js`: The JavaScript code that connects to the GeoServer backend via WFS and allows for dynamic filtering of water point types.
+
+## Data Model
+
+The application uses a structured data model:
+- **Administrative Boundaries**: A polygon layer for regional boundaries.
+- **Water Points**: A single point layer for all water sources. Each feature has a `type` property to distinguish between:
+  - `PUITS` (Wells)
+  - `FORAGE` (Boreholes)
+  - `MARE` (Ponds)
 
 ## Technologies Used
 
 - **Backend**
-  - **GeoServer**: For serving geospatial data via WFS.
+  - **GeoServer**: For serving geospatial data via WFS, with CQL filters for dynamic data requests.
   - **JBoss (WildFly)**: The application server running GeoServer.
   - **Docker**: For containerizing and running the backend services.
 
@@ -59,7 +66,7 @@ This will start the WildFly server with GeoServer deployed. You can verify that 
 The frontend files need to be served by a separate, simple web server.
 
 a. **Start a local web server:**
-In a **new terminal window**, navigate to the project's root directory and run one of the following commands (depending on what you have installed):
+In a **new terminal window**, navigate to the project's root directory and run one of the following commands:
 
 If you have Python:
 ```bash
@@ -72,4 +79,4 @@ npx serve .
 ```
 
 b. **Open the application in your browser:**
-Navigate to `http://localhost:8000/frontend/` (or the appropriate URL for your web server). The map should load, making WFS requests to the GeoServer instance running on port 8080 to display the data layers.
+Navigate to `http://localhost:8000/frontend/` (or the appropriate URL for your web server). The map should load, making WFS requests to the GeoServer instance. The sidebar will allow you to toggle the visibility of the administrative boundaries and filter the water points by type.
