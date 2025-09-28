@@ -175,6 +175,9 @@ detailsForm.addEventListener('submit', function(evt) {
         } else {
             alert('Error saving waterpoint!');
         }
+    }).catch(error => {
+        console.error('Submission failed:', error);
+        alert('Submission failed due to a network error. Please try again.');
     });
 });
 
