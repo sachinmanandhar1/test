@@ -18,7 +18,8 @@ public class Main {
         Server server = new Server(8080);
         WebAppContext webAppContext = new WebAppContext();
         webAppContext.setContextPath("/");
-        webAppContext.setResourceBase("src/main/webapp");
+        webAppContext.setResourceBase("frontend");
+        webAppContext.setWelcomeFiles(new String[]{"index.html"});
 
         // CDI
         webAppContext.addEventListener(new Listener());

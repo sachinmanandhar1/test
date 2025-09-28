@@ -1,8 +1,8 @@
 # Stage 1: Build the Maven project
 FROM public.ecr.aws/jht/maven:3.8.3-openjdk-8-slim AS build
 WORKDIR /app
-COPY pom.xml .
-COPY src ./src
+COPY backend/pom.xml .
+COPY backend/src ./src
 RUN mvn clean package
 
 # Stage 2: Create the final image with Amazon Corretto
@@ -10,6 +10,7 @@ FROM public.ecr.aws/amazoncorretto/amazoncorretto:8
 WORKDIR /app
 COPY --from=build /app/target/pasteau-sahel.jar .
 COPY --from=build /app/target/lib ./lib
+COPY frontend ./frontend
 
 # Expose the HTTP port
 EXPOSE 8080
