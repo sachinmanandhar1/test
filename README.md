@@ -47,41 +47,18 @@ The project is organized into the following directories:
 
 ## How to Run
 
-The application is composed of two main parts: the containerized backend and the frontend, which needs to be served by a simple web server.
-
-### 1. Run the Backend
-
-The backend (application server and database) is managed by Docker Compose.
+The entire application (frontend and backend) is containerized and managed by Docker Compose.
 
 From the project's root directory, run the following command:
 ```bash
-docker-compose up --build
+sudo docker compose up --build
 ```
 This will:
 1.  Build the PostgreSQL database image.
 2.  Build the Java EE application using the `backend/Dockerfile`.
-3.  Start both containers and connect them.
+3.  Start the Nginx, application, and database containers and connect them.
 
-You can access the two main parts of the backend:
-*   **REST API:** `http://localhost:8080/api/waterpoints`
-*   **Management UI:** `http://localhost:8080/admin/list.xhtml`
-
-### 2. Run the Frontend
-
-The frontend files must be served by a separate, simple web server.
-
-a. **Start a local web server:**
-In a **new terminal window**, navigate to the project's root directory and run one of the following commands:
-
-If you have Python:
-```bash
-python -m http.server
-```
-
-If you have Node.js and `npx`:
-```bash
-npx serve .
-```
-
-b. **Open the application in your browser:**
-Navigate to `http://localhost:8000/frontend/`. The map will load and fetch data from the backend. You can now click on the map to add new water points or click on existing points to view their details.
+Once the services are running, you can access the application:
+*   **Main Application:** `http://localhost:8000/frontend/`
+*   **Management UI:** `http://localhost:8000/admin/list.xhtml`
+*   **REST API:** `http://localhost:8000/api/waterpoints`
