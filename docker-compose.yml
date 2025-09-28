@@ -1,36 +1,7 @@
 version: '3.8'
 services:
-  db:
-    build: ./database
-    container_name: pasteau-db
-    environment:
-      POSTGRES_USER: pasteau
-      POSTGRES_PASSWORD: password
-      POSTGRES_DB: pasteau_sahel
-    ports:
-      - "5432:5432"
-    volumes:
-      - postgres_data:/var/lib/postgresql/data
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U pasteau -d pasteau_sahel"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-
   app:
     build: ./backend
     container_name: pasteau-app
     ports:
       - "8080:8080"
-    depends_on:
-      db:
-        condition: service_healthy
-    environment:
-      DB_HOST: db
-      DB_PORT: 5432
-      DB_NAME: pasteau_sahel
-      DB_USER: pasteau
-      DB_PASSWORD: password
-
-volumes:
-  postgres_data:
