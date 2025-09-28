@@ -28,7 +28,7 @@ public class WaterpointController implements Serializable {
     }
 
     public void save() {
-        if (selectedWaterpoint.getId() == null) {
+        if (selectedWaterpoint.getGid() == null) {
             waterpointService.save(selectedWaterpoint);
         } else {
             waterpointService.update(selectedWaterpoint);

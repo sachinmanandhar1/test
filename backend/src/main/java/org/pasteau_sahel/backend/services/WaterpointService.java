@@ -2,12 +2,12 @@ package org.pasteau_sahel.backend.services;
 
 import org.pasteau_sahel.backend.entities.Waterpoint;
 
-import javax.ejb.Stateless;
+import javax.enterprise.context.ApplicationScoped;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.List;
 
-@Stateless
+@ApplicationScoped
 public class WaterpointService {
 
     @PersistenceContext(unitName = "pasteau-sahel-pu")

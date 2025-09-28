@@ -1,7 +1,7 @@
 version: '3.8'
 services:
   db:
-    image: postgres:13
+    build: ./database
     container_name: pasteau-db
     environment:
       POSTGRES_USER: pasteau
@@ -11,6 +11,11 @@ services:
       - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pasteau -d pasteau_sahel"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   app:
     build: ./backend
@@ -18,7 +23,8 @@ services:
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      db:
+        condition: service_healthy
     environment:
       DB_HOST: db
       DB_PORT: 5432
